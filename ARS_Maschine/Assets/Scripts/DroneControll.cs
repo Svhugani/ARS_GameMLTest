@@ -22,6 +22,11 @@ public class DroneControll : MonoBehaviour
     private float _fitnessValue = 0;
     private float[][] _dronePolicy;
     private Vector3 _droneBasePosition;
+    private int _numberOfSensors = 5;
+    private float _spotAngleOfSensors = 20f;
+    private float[] _listOfSensorData;
+    private float _sensorRange = 8f;
+
 
     public float FitnessValue
     {
@@ -84,6 +89,13 @@ public class DroneControll : MonoBehaviour
 
     }
 
+    void GenerateRayDetectors()
+    {
+        float angle = 360f / _numberOfSensors;
+        Quaternion rotation = Quaternion.Euler(0, angle, 0);
+        Vector3 detectorDirection = this.transform.forward;
+
+    }
     public void BulletDetector(float rayRange, int layer)
     {   
         //SortingLayer.NameToID("DamageLayer")
