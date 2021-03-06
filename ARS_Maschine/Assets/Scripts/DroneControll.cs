@@ -22,8 +22,8 @@ public class DroneControll : MonoBehaviour
     private float _fitnessValue = 0;
     private float[][] _dronePolicy;
     private Vector3 _droneBasePosition;
-    private int _numberOfSensors = 5;
-    private float _spotAngleOfSensors = 20f;
+    private int _numOfSensors = 6;
+    private float _spotAngleOfSensors = 5f;
     private float[] _listOfSensorData;
     private float _sensorRange = 8f;
 
@@ -89,28 +89,44 @@ public class DroneControll : MonoBehaviour
 
     }
 
-    void GenerateRayDetectors()
+    private Vector3[] GenerateRayDetectors()
     {
-        float angle = 360f / _numberOfSensors;
-        Quaternion rotation = Quaternion.Euler(0, angle, 0);
-        Vector3 detectorDirection = this.transform.forward;
+        Vector3[] sensorDirections = new Vector3[_numOfSensors];
+        float angle = 360f / (_numOfSensors - 1);
+        Quaternion rotation = Quaternion.Euler(0, 0, angle);
+        Vector3 sensorDirection = this.transform.forward;
+        sensorDirections[0] = sensorDirection;
+        sensorDirection = Quaternion.Euler(_spotAngleOfSensors, 0, 0) * sensorDirection;
+        sensorDirections[1] = sensorDirection;
+
+        for (int i = 2; i < _numOfSensors; i++)
+        {
+            sensorDirection = rotation * sensorDirection;
+            sensorDirections[i] = sensorDirection;
+        }
+
+        return sensorDirections;
 
     }
-    public void BulletDetector(float rayRange, int layer)
+    public void BulletDetector( int layer)
     {   
         //SortingLayer.NameToID("DamageLayer")
         //Vector3 detectorDirection = Random.onUnitSphere;
-        Vector3 detectorDirection = this.transform.forward;
-        if(Physics.Raycast(this.transform.position, detectorDirection, out RaycastHit hitInfo, rayRange))
+        //Vector3 detectorDirection = this.transform.forward;
+        foreach (Vector3 detectorDirection in GenerateRayDetectors())
         {
-            Debug.DrawRay(this.transform.position, detectorDirection * hitInfo.distance, Color.red);
-            Debug.Log("hitted bullet");
+            if(Physics.Raycast(this.transform.position, detectorDirection, out RaycastHit hitInfo, _sensorRange))
+            {
+                Debug.DrawRay(this.transform.position, detectorDirection * hitInfo.distance, Color.red);
+                //Debug.Log("hitted bullet");
+            }
+            else
+            {
+                Debug.DrawRay(this.transform.position, detectorDirection * _sensorRange, Color.white);
+                //Debug.Log("----");
+            }           
         }
-        else
-        {
-            Debug.DrawRay(this.transform.position, detectorDirection * rayRange, Color.white);
-            Debug.Log("----");
-        }
+
     }
 
     //Start at awake
