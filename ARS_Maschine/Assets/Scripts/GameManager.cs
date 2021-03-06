@@ -134,7 +134,7 @@ public class GameManager : MonoBehaviour
 
         foreach (GameObject drone in _listOfDrones)
         {
-            drone.GetComponent<DroneControll>().BulletDetector();
+            drone.GetComponent<DroneControll>().BulletDetector(10f, 0);
         }       
     }
 

@@ -84,18 +84,19 @@ public class DroneControll : MonoBehaviour
 
     }
 
-    public void BulletDetector()
-    {
+    public void BulletDetector(float rayRange, int layer)
+    {   
+        //SortingLayer.NameToID("DamageLayer")
         //Vector3 detectorDirection = Random.onUnitSphere;
         Vector3 detectorDirection = this.transform.forward;
-        if(Physics.Raycast(this.transform.position, detectorDirection, out RaycastHit hitInfo, 10f, SortingLayer.NameToID("DamageLayer")))
+        if(Physics.Raycast(this.transform.position, detectorDirection, out RaycastHit hitInfo, rayRange))
         {
             Debug.DrawRay(this.transform.position, detectorDirection * hitInfo.distance, Color.red);
             Debug.Log("hitted bullet");
         }
         else
         {
-            Debug.DrawRay(this.transform.position, detectorDirection * 10f, Color.white);
+            Debug.DrawRay(this.transform.position, detectorDirection * rayRange, Color.white);
             Debug.Log("----");
         }
     }
