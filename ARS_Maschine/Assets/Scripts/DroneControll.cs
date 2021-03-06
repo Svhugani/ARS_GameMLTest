@@ -86,7 +86,8 @@ public class DroneControll : MonoBehaviour
 
     public void BulletDetector()
     {
-        Vector3 detectorDirection = Random.onUnitSphere;
+        //Vector3 detectorDirection = Random.onUnitSphere;
+        Vector3 detectorDirection = this.transform.forward;
         if(Physics.Raycast(this.transform.position, detectorDirection, out RaycastHit hitInfo, 10f, SortingLayer.NameToID("DamageLayer")))
         {
             Debug.DrawRay(this.transform.position, detectorDirection * hitInfo.distance, Color.red);
