@@ -119,17 +119,21 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+    }
+
+    void FixedUpdate()
+    {
         if (Time.time > _nextActionTime)
         {
             _nextActionTime = Time.time + attackPeriod;
             RandomDroneMovement(_listOfDrones);
             CannonAttack(new Vector3(0,.5f,0), _listOfDrones);
+            foreach (GameObject drone in _listOfDrones)
+            {
+                drone.GetComponent<DroneControll>().BulletDetector();
+            }
         }
-    }
-
-    void FixedUpdate()
-    {
-
     }
 
 

@@ -7,7 +7,7 @@ public class bulletManager : MonoBehaviour
     // Start is called before the first frame update
     void OnCollisionEnter(Collision other)
     {
-        Debug.Log("ball hits something");
+        //Debug.Log("ball hits something");
         Destroy(this.gameObject);
     }
     void Start()

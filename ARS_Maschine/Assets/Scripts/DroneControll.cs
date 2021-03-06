@@ -83,6 +83,21 @@ public class DroneControll : MonoBehaviour
         }
 
     }
+
+    public void BulletDetector()
+    {
+        Vector3 detectorDirection = Random.onUnitSphere;
+        if(Physics.Raycast(this.transform.position, detectorDirection, out RaycastHit hitInfo, 5f, SortingLayer.NameToID("DamageLayer")))
+        {
+            Debug.DrawRay(this.transform.position, detectorDirection * hitInfo.distance, Color.red);
+            Debug.Log("hitted bullet");
+        }
+        else
+        {
+            Debug.DrawRay(this.transform.position, detectorDirection * 5f, Color.white);
+        }
+    }
+
     //Start at awake
     void Awake()
     {
