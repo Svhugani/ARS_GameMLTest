@@ -106,6 +106,7 @@ public class GameManager : MonoBehaviour
         Vector3 distanceFromBasePos = drone.transform.position - drone.GetComponent<DroneControll>().DroneBasePosition;
         distanceFromBasePos = Mathf.Min(1, 0.1f * distanceFromBasePos.magnitude) * distanceFromBasePos.normalized;
 
+        return new float[]{1,2,3};;
 
     }
 
