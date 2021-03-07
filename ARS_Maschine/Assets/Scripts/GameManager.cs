@@ -101,6 +101,7 @@ public class GameManager : MonoBehaviour
             In order to normalize inputs we need to prevent it from getting to high values. We do this by normalizing 
             our distance vector and multiplying by Min of 1 and its magnitude divided by 10.  When we divide we say that
             if magnitude of distance vector is higher than 10, we dont distinguish  any further movement away from base point.
+            2) rotation - rotation between current rotaton and desired rotation
 
         */
         Vector3 distanceFromBasePos = drone.transform.position - drone.GetComponent<DroneControll>().DroneBasePosition;
