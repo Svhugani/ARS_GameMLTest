@@ -9,15 +9,19 @@ public class GameManager : MonoBehaviour
     public GameObject dronePrefab;
     public GameObject cannonPrefab;
     public GameObject bulletPrefab;
-
     public GameObject bulletBoundaryPrefab;
     private bool _cannonInstantiated = false;
-
     private float _nextActionTime = 0f;
-
     public float attackPeriod = 1f;
     private List<GameObject> _listOfDrones = new List<GameObject>();
     private ARSNetwork _arsNetwork;
+    private Vector3 _centerPoint = new Vector3(0,.1f,0);
+
+    public Vector3 CenterPoint
+    {
+        get { return _centerPoint;}
+        set {_centerPoint = value;}
+    }
 
     void SetUpEnvironment(int numOfInputs, int numOfOutputs, int numOfDirections, int numOfBestDirections)
     {
@@ -36,6 +40,7 @@ public class GameManager : MonoBehaviour
             Quaternion droneRotation = Quaternion.Euler(0, i * angle ,0);
             tempDrone = Instantiate(dronePrefab, droneInitPos, droneRotation);
             tempDrone.GetComponent<DroneControll>().DroneBasePosition = droneInitPos;
+            tempDrone.GetComponent<DroneControll>().CenterPoint = _centerPoint;
             _listOfDrones.Add(tempDrone);
             
             droneInitPos = center + rotation * (droneInitPos - center);
@@ -72,7 +77,6 @@ public class GameManager : MonoBehaviour
         {
             int direction;
             float r = Random.Range(0, 1f);
-            //Debug.Log("Random number: " + r.ToString());
 
             if (r > 0.8)
             {
@@ -93,27 +97,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private float[] ObservationState(GameObject drone)
-    {
-        /*
-            Define input space:
-            1) vector - distance between current position of drone and base position which is desired to maintain.
-            In order to normalize inputs we need to prevent it from getting to high values. We do this by normalizing 
-            our distance vector and multiplying by Min of 1 and its magnitude divided by 10.  When we divide we say that
-            if magnitude of distance vector is higher than 10, we dont distinguish  any further movement away from base point.
 
-        */
-        Vector3 distanceFromBasePos = drone.transform.position - drone.GetComponent<DroneControll>().DroneBasePosition;
-        distanceFromBasePos = Mathf.Min(1, 0.1f * distanceFromBasePos.magnitude) * distanceFromBasePos.normalized;
-
-        return new float[]{1,2,3};;
-
-    }
 
    // Start is called before the first frame update
     void Start()
     {
-        GenerateDrones(new Vector3(0,.1f,0), _distOfDrones, _numOfDrones);       
+        GenerateDrones(_centerPoint, _distOfDrones, _numOfDrones);       
     }
 
     // Update is called once per frame
@@ -128,12 +117,14 @@ public class GameManager : MonoBehaviour
         {
             _nextActionTime = Time.time + attackPeriod;
             RandomDroneMovement(_listOfDrones);
-            CannonAttack(new Vector3(0,.5f,0), _listOfDrones);
-            foreach (GameObject drone in _listOfDrones)
-            {
-                drone.GetComponent<DroneControll>().BulletDetector();
-            }
+            CannonAttack(_centerPoint, _listOfDrones);
+
         }
+
+        foreach (GameObject drone in _listOfDrones)
+        {
+            drone.GetComponent<DroneControll>().ObservationState( 1 << 8);
+        }       
     }
 
 
