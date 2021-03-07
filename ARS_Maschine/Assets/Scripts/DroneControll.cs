@@ -26,13 +26,20 @@ public class DroneControll : MonoBehaviour
     private float _spotAngleOfSensors = 5f;
     private float[] _listOfSensorData;
     private float _sensorRange = 8f;
-
+    private float[] _dronePolicyInput = new float[5];
+    private Vector3 _centerPoint;
 
     public float FitnessValue
     {
         get { return _fitnessValue; }
         set { _fitnessValue = value; }
     }
+
+    public Vector3 CenterPoint
+    {
+        get { return _centerPoint;}
+        set {_centerPoint = value;}
+    } 
 
     public float[][] DronePolicy
     {
@@ -53,7 +60,12 @@ public class DroneControll : MonoBehaviour
         _ring2.transform.Rotate(-Vector3.forward, 15 * Mathf.Abs(Mathf.Sin( 10* Time.time)));
     }
 
-
+    void TestRotation()
+    {
+        Vector3 point = new Vector3(_centerPoint.x, 0, _centerPoint.z );
+        float angle = Vector3.Angle(this.transform.forward, point - this.transform.position);
+        Debug.Log( "angle: " + angle.ToString());
+    }
     void ManualDroneMovement()
     {
         _hRot = Input.GetAxis("Vertical");
@@ -112,22 +124,43 @@ public class DroneControll : MonoBehaviour
     }
     public void BulletDetector( int layer)
     {   
-        //SortingLayer.NameToID("DamageLayer")
-        //Vector3 detectorDirection = Random.onUnitSphere;
-        //Vector3 detectorDirection = this.transform.forward;
+        int i = 0;
         foreach (Vector3 detectorDirection in GenerateRayDetectors())
         {
             if(Physics.Raycast(this.transform.position, detectorDirection, out RaycastHit hitInfo, _sensorRange, layer))
             {
                 Debug.DrawRay(this.transform.position, detectorDirection * hitInfo.distance, Color.red);
-                //Debug.Log("hitted bullet");
+                _listOfSensorData[i] = 1 - hitInfo.distance / _sensorRange;
             }
             else
             {
                 Debug.DrawRay(this.transform.position, detectorDirection * _sensorRange, Color.white);
-                //Debug.Log("----");
-            }           
+                _listOfSensorData[i] = 0;
+            }
+
+            i++;           
         }
+
+    }
+
+
+    private void ObservationState()
+    {
+        /*
+            Define input space:
+            1) vector - distance between current position of drone and base position which is desired to maintain.
+            In order to normalize inputs we need to prevent it from getting to high values. We do this by normalizing 
+            our distance vector and multiplying by Min of 1 and its magnitude divided by 10.  When we divide we say that
+            if magnitude of distance vector is higher than 10, we dont distinguish  any further movement away from base point.
+            2) rotation - rotation between current rotaton and desired rotation
+
+        */
+        Vector3 distanceFromBasePos = this.transform.position - this._droneBasePosition;
+        distanceFromBasePos = Mathf.Min(1, 0.1f * distanceFromBasePos.magnitude) * distanceFromBasePos.normalized;
+
+        Vector3 point = new Vector3(_centerPoint.x, 0, _centerPoint.z );
+        float angle = Vector3.Angle(this.transform.forward, point - this.transform.position) / 180;
+
 
     }
 
@@ -144,7 +177,8 @@ public class DroneControll : MonoBehaviour
         _ring1 = this.transform.Find("DroneFull").gameObject;
         _ring1 = _ring1.transform.Find("lightRing_1").gameObject;
         _ring2 = this.transform.Find("DroneFull").gameObject;
-        _ring2 = _ring2.transform.Find("lightRing_2").gameObject;       
+        _ring2 = _ring2.transform.Find("lightRing_2").gameObject;      
+        _listOfSensorData = new float[_numOfSensors + 3 + 1]; 
 
     }
     // Start is called before the first frame update
@@ -200,5 +234,6 @@ public class DroneControll : MonoBehaviour
         _rigidbody.AddRelativeTorque(Vector3.up * _angularSpeed * _vRot);
 
         DroneRotator();
+        TestRotation();
     }
 }
