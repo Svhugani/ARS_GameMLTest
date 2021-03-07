@@ -127,7 +127,7 @@ public class GameManager : MonoBehaviour
         if (Time.time > _nextActionTime)
         {
             _nextActionTime = Time.time + attackPeriod;
-            //RandomDroneMovement(_listOfDrones);
+            RandomDroneMovement(_listOfDrones);
             CannonAttack(new Vector3(0,.5f,0), _listOfDrones);
 
         }
