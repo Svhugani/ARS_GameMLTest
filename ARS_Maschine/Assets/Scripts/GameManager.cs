@@ -128,13 +128,13 @@ public class GameManager : MonoBehaviour
         {
             _nextActionTime = Time.time + attackPeriod;
             //RandomDroneMovement(_listOfDrones);
-            //CannonAttack(new Vector3(0,.5f,0), _listOfDrones);
+            CannonAttack(new Vector3(0,.5f,0), _listOfDrones);
 
         }
 
         foreach (GameObject drone in _listOfDrones)
         {
-            drone.GetComponent<DroneControll>().BulletDetector(0);
+            drone.GetComponent<DroneControll>().BulletDetector( 1 << 8);
         }       
     }
 

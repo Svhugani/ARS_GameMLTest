@@ -94,14 +94,16 @@ public class DroneControll : MonoBehaviour
         Vector3[] sensorDirections = new Vector3[_numOfSensors];
         float angle = 360f / (_numOfSensors - 1);
         Quaternion rotation = Quaternion.Euler(0, 0, angle);
-        Vector3 sensorDirection = this.transform.forward;
+        Vector3 baseSensor = this.transform.forward;
+        Vector3 sensorDirection = baseSensor;
         sensorDirections[0] = sensorDirection;
-        sensorDirection = Quaternion.Euler(_spotAngleOfSensors, 0, 0) * sensorDirection;
+        sensorDirection = Quaternion.AngleAxis(_spotAngleOfSensors, this.transform.right) * sensorDirection;
         sensorDirections[1] = sensorDirection;
 
         for (int i = 2; i < _numOfSensors; i++)
         {
-            sensorDirection = rotation * sensorDirection;
+            //sensorDirection = rotation * sensorDirection;
+            sensorDirection = Quaternion.AngleAxis(angle, baseSensor) * sensorDirection;
             sensorDirections[i] = sensorDirection;
         }
 
@@ -115,7 +117,7 @@ public class DroneControll : MonoBehaviour
         //Vector3 detectorDirection = this.transform.forward;
         foreach (Vector3 detectorDirection in GenerateRayDetectors())
         {
-            if(Physics.Raycast(this.transform.position, detectorDirection, out RaycastHit hitInfo, _sensorRange))
+            if(Physics.Raycast(this.transform.position, detectorDirection, out RaycastHit hitInfo, _sensorRange, layer))
             {
                 Debug.DrawRay(this.transform.position, detectorDirection * hitInfo.distance, Color.red);
                 //Debug.Log("hitted bullet");
