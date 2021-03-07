@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37708550281c942409940f0b90c2aea7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _numOfDrones: 4
+  _numOfDrones: 24
   _distOfDrones: 10
   dronePrefab: {fileID: 9037603882096714347, guid: 3f4ff28ba81b6d94ab927986cd815c82,
     type: 3}

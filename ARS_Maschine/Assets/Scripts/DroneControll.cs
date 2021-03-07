@@ -60,12 +60,6 @@ public class DroneControll : MonoBehaviour
         _ring2.transform.Rotate(-Vector3.forward, 15 * Mathf.Abs(Mathf.Sin( 10* Time.time)));
     }
 
-    void TestRotation()
-    {
-        Vector3 point = new Vector3(_centerPoint.x, 0, _centerPoint.z );
-        float angle = Vector3.Angle(this.transform.forward, point - this.transform.position);
-        Debug.Log( "angle: " + angle.ToString());
-    }
     void ManualDroneMovement()
     {
         _hRot = Input.GetAxis("Vertical");
@@ -122,7 +116,7 @@ public class DroneControll : MonoBehaviour
         return sensorDirections;
 
     }
-    public void BulletDetector( int layer)
+    private void BulletDetector( int layer)
     {   
         int i = 0;
         foreach (Vector3 detectorDirection in GenerateRayDetectors())
@@ -144,7 +138,7 @@ public class DroneControll : MonoBehaviour
     }
 
 
-    private void ObservationState()
+    public void ObservationState(int layer)
     {
         /*
             Define input space:
@@ -160,6 +154,11 @@ public class DroneControll : MonoBehaviour
 
         Vector3 point = new Vector3(_centerPoint.x, 0, _centerPoint.z );
         float angle = Vector3.Angle(this.transform.forward, point - this.transform.position) / 180;
+        BulletDetector(layer);
+        _listOfSensorData[_numOfSensors] = distanceFromBasePos.x;
+        _listOfSensorData[_numOfSensors + 1] = distanceFromBasePos.y;
+        _listOfSensorData[_numOfSensors + 2] = distanceFromBasePos.z;
+        _listOfSensorData[_numOfSensors + 3] = angle;
 
 
     }
@@ -234,6 +233,6 @@ public class DroneControll : MonoBehaviour
         _rigidbody.AddRelativeTorque(Vector3.up * _angularSpeed * _vRot);
 
         DroneRotator();
-        TestRotation();
+
     }
 }

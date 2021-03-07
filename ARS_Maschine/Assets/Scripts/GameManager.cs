@@ -77,7 +77,6 @@ public class GameManager : MonoBehaviour
         {
             int direction;
             float r = Random.Range(0, 1f);
-            //Debug.Log("Random number: " + r.ToString());
 
             if (r > 0.8)
             {
@@ -124,7 +123,7 @@ public class GameManager : MonoBehaviour
 
         foreach (GameObject drone in _listOfDrones)
         {
-            drone.GetComponent<DroneControll>().BulletDetector( 1 << 8);
+            drone.GetComponent<DroneControll>().ObservationState( 1 << 8);
         }       
     }
 
